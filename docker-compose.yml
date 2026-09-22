@@ -1,0 +1,28 @@
+services:
+
+  db:
+    image: postgres:14
+    environment:
+      POSTGRES_DB: devflow
+      POSTGRES_USER: devflow
+      POSTGRES_PASSWORD: devflow
+    ports:
+      - "5433:5432"
+    volumes:
+      - devflow-db:/var/lib/postgresql/data
+
+  backend:
+    build: .
+    depends_on:
+      - db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/devflow
+      SPRING_DATASOURCE_USERNAME: devflow
+      SPRING_DATASOURCE_PASSWORD: devflow
+      JWT_SECRET: devflow-super-secret-key-change-this-later-123456789
+      JWT_EXPIRATION: 86400000
+    ports:
+      - "8081:8080"
+
+volumes:
+  devflow-db:

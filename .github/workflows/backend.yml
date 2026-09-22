@@ -1,0 +1,44 @@
+name: Backend CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:14
+        env:
+          POSTGRES_DB: devflow
+          POSTGRES_USER: devflow
+          POSTGRES_PASSWORD: devflow
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U devflow -d devflow"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+
+      - name: Run tests
+        run: ./mvnw test
+        env:
+          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/devflow
+          SPRING_DATASOURCE_USERNAME: devflow
+          SPRING_DATASOURCE_PASSWORD: devflow
