@@ -37,7 +37,7 @@ jobs:
           cache: maven
 
       - name: Run tests
-        run: ./mvnw test
+        run: ./mvnw test -e
         env:
           SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/devflow
           SPRING_DATASOURCE_USERNAME: devflow
